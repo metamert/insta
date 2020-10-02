@@ -86,6 +86,7 @@ setTimeout(() => {
 async function start(name){
   console.log(name)
   console.log(`https://www.instagram.com/${name}/?__a=1`)
+  //"etsy" yazarak etsynin idsini alıyoruz aslında direk idsini bulabilirz ama sonradan bugra yazdıgımızda otomatik onun kullanıclarını almıs olcaz daha rahat
   axios({
     method: 'get', //you can set what request you want to be
     url: `https://www.instagram.com/${name}/?__a=1`,
@@ -106,9 +107,10 @@ async function start(name){
   
     }
   }).then(n => {
-  
+  //kullanıcı id sini aldık
     let userid = n.data.logging_page_id.split("_")[1]
   console.log(userid)
+    //alttaki url followersları alma urlsi ama ilk follower çekişle sonrakiler farklı
     let url = `https://www.instagram.com/graphql/query/?query_hash=d04b0a864b4b54837c0d870b0e77e076&variables=%7B%22id%22%3A%22${userid}%22%2C%22include_reel%22%3Atrue%2C%22fetch_mutual%22%3Atrue%2C%22first%22%3A24%7D`
   console.log(url) 
     axios({
@@ -131,7 +133,7 @@ async function start(name){
   
       }
     }).then(response => {
-  
+  //followersları çektik yanında kullancılar ve after geldi sonra bunu loopa alıcaz aşagıda
       let obj = response.data.data.user.edge_follow
   
       let after = obj.page_info.end_cursor
@@ -169,7 +171,9 @@ async function start(name){
           //console.log(response.data.data.user.edge_followed_by)
   
           Array.push(response.data.data.user.edge_followed_by.edges)
+          //yukarıdaki direk id si her request sonrası new url üretiyoruz çünkü after şeyleri farklı hepsinin
           if (Array.length > 50) {
+            //50 ye ulaştıgında durdur
             clearInterval(inter);
   showid(Array)
           }
